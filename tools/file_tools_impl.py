@@ -671,6 +671,10 @@ def grep_search_impl(
         - Skips files that can't be read (binary, permissions)
         - Handles regex errors gracefully
     """
+    # Directories and file patterns to exclude from search
+    EXCLUDED_DIRS = {'logs', 'backup', '__pycache__', 'node_modules', '.git', '.venv', 'venv'}
+    EXCLUDED_EXTENSIONS = {'.out', '.log', '.backup', '.bak', '.pyc', '.pyo'}
+
     try:
         # Path Traversal check
         if "../" in file_pattern or file_pattern.endswith(".."):
@@ -686,7 +690,24 @@ def grep_search_impl(
             file_pattern = f"**/{file_pattern}"
 
         full_pattern = os.path.join(project_root, file_pattern)
-        files = glob_module.glob(full_pattern, recursive=True)
+        all_files = glob_module.glob(full_pattern, recursive=True)
+
+        # Filter out excluded directories and file types
+        files = []
+        for file_path in all_files:
+            rel_path = os.path.relpath(file_path, project_root)
+            path_parts = rel_path.split(os.sep)
+
+            # Skip if any path component is in excluded dirs
+            if any(part in EXCLUDED_DIRS for part in path_parts):
+                continue
+
+            # Skip if file extension is excluded
+            _, ext = os.path.splitext(file_path)
+            if ext.lower() in EXCLUDED_EXTENSIONS:
+                continue
+
+            files.append(file_path)
 
         # Compile regex
         flags = re.IGNORECASE if ignore_case else 0
@@ -694,10 +715,19 @@ def grep_search_impl(
 
         results = []
         total_matches = 0
+        files_with_matches = 0
+        MAX_MATCHES = 50  # Limit to prevent token overflow
+        MAX_FILES = 20    # Limit number of files to search
+        truncated = False
 
         for file_path in files:
             if not os.path.isfile(file_path):
                 continue
+
+            # Stop if we've hit the file limit
+            if files_with_matches >= MAX_FILES:
+                truncated = True
+                break
 
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
@@ -707,6 +737,11 @@ def grep_search_impl(
                 file_matches = []
 
                 for i, line in enumerate(lines, 1):
+                    # Stop if we've hit the match limit
+                    if total_matches >= MAX_MATCHES:
+                        truncated = True
+                        break
+
                     if regex.search(line):
                         # Get context before and after
                         context_start = max(0, i - 1 - context_lines)
@@ -724,6 +759,12 @@ def grep_search_impl(
                 if file_matches:
                     results.append(f"\nFile: {rel_path}\n{'-' * 60}")
                     results.extend(file_matches)
+                    files_with_matches += 1
+
+                # Check if we need to stop after processing this file
+                if total_matches >= MAX_MATCHES:
+                    truncated = True
+                    break
 
             except Exception:
                 continue
@@ -735,10 +776,15 @@ def grep_search_impl(
             f"Search results for '{pattern}'",
             "=" * 60
         ]
+
+        truncation_notice = ""
+        if truncated:
+            truncation_notice = f"\n⚠️ Results truncated (limit: {MAX_MATCHES} matches, {MAX_FILES} files). Use a more specific file_pattern to narrow search."
+
         footer = [
             "",
             "=" * 60,
-            f"Total matches: {total_matches} in {len(results)} files"
+            f"Total matches: {total_matches} in {files_with_matches} files{truncation_notice}"
         ]
 
         return "\n".join(header + results + footer)
