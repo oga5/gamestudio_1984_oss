@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=360, height=640, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{GAME_TITLE}}</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Game Canvas: 360x540 -->
+        <canvas id="game-canvas" width="360" height="540"></canvas>
+
+        <!-- Virtual Controller: 360x100 -->
+        <div id="virtual-controller">
+            <!-- Joystick touch area (invisible overlay) -->
+            <div id="joystickTouchArea" class="joystick-touch-area"></div>
+
+            <!-- Joystick visual feedback -->
+            <div class="joystick-container">
+                <div id="joystickBase" class="joystick-base">
+                    <div id="joystickStick" class="joystick-stick"></div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div id="action-buttons">
+                <button id="btn-b" class="action-btn">B</button>
+                <button id="btn-a" class="action-btn">A</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Script (all code in one file) -->
+    <script src="game.js"></script>
+</body>
+</html>

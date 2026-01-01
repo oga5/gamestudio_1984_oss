@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "bpm": 120,
+  "patternLength": 8,
+  "masterVolume": 0.7,
+  "tracks": {
+    "drum": {
+      "muted": false,
+      "volume": 0.8,
+      "data": {
+        "Kick": [true, false, true, false, true, false, true, false],
+        "Snare": [false, false, true, false, false, false, true, false],
+        "Hi-Hat": [true, true, true, true, true, true, true, true],
+        "Clap": [false, false, false, false, false, false, false, false]
+      }
+    },
+    "bass": {
+      "muted": false,
+      "volume": 0.7,
+      "waveform": "sawtooth",
+      "data": {
+        "C2": [true, false, false, false, true, false, false, false],
+        "D2": [false, false, false, false, false, false, false, false],
+        "E2": [false, false, false, false, false, false, false, false],
+        "F2": [false, false, false, false, false, false, false, false],
+        "G2": [false, false, false, false, false, false, false, false],
+        "A2": [false, false, false, false, false, false, false, false],
+        "B2": [false, false, false, false, false, false, false, false],
+        "C3": [false, false, false, false, false, false, false, false]
+      }
+    },
+    "melody": {
+      "muted": false,
+      "volume": 0.6,
+      "waveform": "sine",
+      "data": {
+        "C4": [true, false, false, false, false, false, false, false],
+        "D4": [false, true, false, false, false, false, false, false],
+        "E4": [false, false, true, false, false, false, false, false],
+        "F4": [false, false, false, true, false, false, false, false],
+        "G4": [false, false, false, false, true, false, false, false],
+        "A4": [false, false, false, false, false, false, false, false],
+        "B4": [false, false, false, false, false, false, false, false],
+        "C5": [false, false, false, false, false, false, false, false]
+      }
+    }
+  }
+}

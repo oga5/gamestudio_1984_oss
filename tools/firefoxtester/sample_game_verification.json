@@ -1,0 +1,69 @@
+{
+  "description": "3段階ゲーム検証テストスクリプトサンプル",
+  "usage": "python firefoxtester.py /path/to/index.html --verification --control_keys 'UP,DOWN,LEFT,RIGHT' --output verification_result.json",
+  "test_steps": [
+    {
+      "step": 1,
+      "name": "Title Screen Verification",
+      "description": "ゲーム読み込みとタイトル画面のスクリーンショット取得",
+      "actions": [
+        "Load game in Firefox",
+        "Wait for initialization",
+        "Capture title screen screenshot (01_title_screen.png)",
+        "Analyze brightness to confirm rendering"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "Game Start Verification",
+      "description": "画面中央タップでゲーム開始、スクリーンショット取得とタイトル画面との比較",
+      "actions": [
+        "Tap screen center",
+        "Wait 1 second for game to start",
+        "Capture game started screenshot (02_game_started.png)",
+        "Compare with title screen",
+        "Verify significant pixel changes (≥20%)"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "Game Playing Verification",
+      "description": "仮想コントローラー操作、スクリーンショット取得とゲーム開始画面との比較",
+      "actions": [
+        "Press UP key",
+        "Press DOWN key",
+        "Press LEFT key",
+        "Press RIGHT key",
+        "Wait 500ms for animation",
+        "Capture game playing screenshot (03_game_playing.png)",
+        "Compare with game started screen",
+        "Verify significant pixel changes (≥20%)"
+      ]
+    }
+  ],
+  "success_criteria": [
+    "✓ Game initialization successful",
+    "✓ Title screen → Game started: Display changed (≥20% pixel difference)",
+    "✓ Game started → Game playing: Display changed (≥20% pixel difference)",
+    "✓ No JavaScript errors in console"
+  ],
+  "output_files": {
+    "01_title_screen.png": "タイトル画面のスクリーンショット",
+    "02_game_started.png": "ゲーム開始直後の画面",
+    "03_game_playing.png": "コントローラー操作後の画面",
+    "verification_result.json": "テスト結果JSON（指定した場合）"
+  },
+  "example_commands": [
+    "# 基本的な検証テスト（デフォルトキー: UP,DOWN,LEFT,RIGHT）",
+    "python firefoxtester.py public/index.html --verification",
+    "",
+    "# カスタムキーで検証テスト",
+    "python firefoxtester.py public/index.html --verification --control_keys 'Z,X,C,V'",
+    "",
+    "# 結果をJSONファイルに保存",
+    "python firefoxtester.py public/index.html --verification --output test_result.json",
+    "",
+    "# 出力ディレクトリを指定",
+    "python firefoxtester.py public/index.html --verification --output_dir ./screenshots"
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "name": "GALACTIC DEFENDER",
+  "description": "Defend Earth from waves of alien invaders in this vertical shooter",
+  "genre": "shooter",
+  "screen": {
+    "width": 360,
+    "height": 540,
+    "backgroundColor": "#000000"
+  },
+  "controls": {
+    "keyboard": ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Space", "Shift"],
+    "touch": true
+  },
+
+  "gameplay": {
+    "objective": "Survive as long as possible and achieve the highest score by destroying alien invaders",
+    "core_loop": "Move to avoid enemies → Shoot aliens → Collect power-ups → Survive waves → Increase difficulty",
+    "win_condition": "No win condition (endless survival)",
+    "lose_condition": "Player health reaches 0",
+    "duration": "2-3 minutes average per session",
+    "difficulty": "medium"
+  },
+
+  "entities": {
+    "player": {
+      "starting_position": {"x": 180, "y": 480},
+      "movement_speed": 200,
+      "max_health": 3,
+      "collision_radius": 12,
+      "abilities": [
+        {
+          "name": "shoot",
+          "cooldown": 0.15,
+          "trigger": "button_a",
+          "description": "Fire laser upward"
+        }
+      ]
+    },
+
+    "enemies": [
+      {
+        "type": "basic_invader",
+        "spawn_pattern": "waves",
+        "spawn_frequency": "Every 2-3 seconds, 3-5 per wave",
+        "movement": "Horizontal zigzag, descending slowly",
+        "speed": 80,
+        "health": 1,
+        "collision_radius": 10,
+        "points_value": 10,
+        "description": "Small alien ships moving in formation"
+      },
+      {
+        "type": "heavy_invader",
+        "spawn_pattern": "random",
+        "spawn_frequency": "Every 15 seconds, 1-2 at a time",
+        "movement": "Direct descent toward player",
+        "speed": 60,
+        "health": 3,
+        "collision_radius": 15,
+        "points_value": 50,
+        "description": "Larger, tougher enemies that track player"
+      }
+    ],
+
+    "projectiles": [
+      {
+        "type": "player_laser",
+        "speed": 400,
+        "damage": 1,
+        "collision_radius": 3,
+        "description": "Player's laser projectile"
+      }
+    ],
+
+    "power_ups": [
+      {
+        "type": "health_pack",
+        "spawn_frequency": "Every 30 seconds",
+        "effect": "Restore 1 health",
+        "duration": 0,
+        "description": "Restores player health"
+      }
+    ]
+  },
+
+  "scoring": {
+    "basic_invader_kill": 10,
+    "heavy_invader_kill": 50,
+    "combo_multiplier": "x1.5 for kills within 2 seconds",
+    "survival_bonus": "1 point per second survived",
+    "display_position": {"x": 10, "y": 20}
+  },
+
+  "difficulty_progression": {
+    "type": "time_based",
+    "stages": [
+      {
+        "time": "0-30s",
+        "enemy_spawn_rate": 1.0,
+        "enemy_speed_multiplier": 1.0,
+        "description": "Easy warm-up phase"
+      },
+      {
+        "time": "30-60s",
+        "enemy_spawn_rate": 1.5,
+        "enemy_speed_multiplier": 1.2,
+        "description": "Moderate challenge"
+      },
+      {
+        "time": "60s+",
+        "enemy_spawn_rate": 2.0,
+        "enemy_speed_multiplier": 1.5,
+        "description": "Maximum difficulty"
+      }
+    ]
+  },
+
+  "game_mechanics": {
+    "collision_detection": "circle-based for all entities",
+    "screen_wrapping": false,
+    "boundary_behavior": "Player cannot leave screen, enemies despawn when off-screen",
+    "particle_effects": [
+      {
+        "trigger": "enemy_destroyed",
+        "type": "explosion",
+        "color": "#ff0000",
+        "particle_count": 15,
+        "duration": 0.5
+      }
+    ],
+    "sound_triggers": [
+      {
+        "event": "player_shoot",
+        "sound": "shoot.wav"
+      },
+      {
+        "event": "enemy_destroyed",
+        "sound": "explosion.wav"
+      },
+      {
+        "event": "player_hit",
+        "sound": "damage.wav"
+      }
+    ],
+    "special_features": [
+      "Screen shake on player hit (3 pixels, 0.2s)",
+      "Health bar display at top-right",
+      "Wave counter display"
+    ]
+  },
+
+  "visual_feedback": {
+    "player_invulnerability": "Flash white for 1 second after taking damage",
+    "low_health_warning": "Screen edges pulse red when health <= 1",
+    "combo_display": "Show multiplier text above player for 2 seconds"
+  },
+
+  "ui_elements": {
+    "hud": [
+      {"element": "score", "position": {"x": 10, "y": 20}},
+      {"element": "health", "position": {"x": 350, "y": 20}, "style": "heart icons"},
+      {"element": "wave", "position": {"x": 180, "y": 20}}
+    ]
+  }
+}

@@ -1,0 +1,155 @@
+/* GameStudio 1984 v0.3 - Simple Game Template */
+/* Target: Mobile vertical screen 360x640 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Courier New', monospace;
+}
+
+#game-container {
+    width: 360px;
+    height: 640px;
+    margin: 0 auto;
+    position: relative;
+    background-color: #111;
+}
+
+/* Game Canvas */
+#game-canvas {
+    display: block;
+    width: 360px;
+    height: 540px;
+    background-color: #000;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Virtual Controller */
+#virtual-controller {
+    width: 360px;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1a1a1a;
+    border-top: 2px solid #333;
+}
+
+/* Joystick Touch Area (invisible overlay) */
+.joystick-touch-area {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 180px;
+    height: 100px;
+    z-index: 45;
+    /* Debug: uncomment to see touch area */
+    /* background: rgba(0, 255, 255, 0.1); */
+}
+
+/* Joystick Container */
+.joystick-container {
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    z-index: 50;
+    pointer-events: none; /* Let touch events pass through to touch area */
+}
+
+.joystick-base {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(85, 85, 85, 0.6) 0%, rgba(51, 51, 51, 0.6) 100%);
+    border: 2px solid #555;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 10px rgba(85, 85, 85, 0.5),
+        inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.joystick-stick {
+    width: 35px;
+    height: 35px;
+    background: radial-gradient(circle, #666 0%, #444 100%);
+    border: 2px solid #888;
+    border-radius: 50%;
+    box-shadow:
+        0 0 10px rgba(136, 136, 136, 0.6),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s;
+}
+
+/* Action Buttons */
+#action-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 3px solid;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.action-btn:active,
+.action-btn.pressed {
+    transform: scale(0.95);
+}
+
+#btn-a {
+    background-color: #c00;
+    border-color: #f00;
+}
+
+#btn-a:active,
+#btn-a.pressed {
+    background-color: #f00;
+}
+
+#btn-b {
+    background-color: #00c;
+    border-color: #00f;
+}
+
+#btn-b:active,
+#btn-b.pressed {
+    background-color: #00f;
+}
+
+/* Responsive centering for larger screens */
+@media screen and (min-width: 361px) {
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #game-container {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        border: 2px solid #333;
+    }
+}

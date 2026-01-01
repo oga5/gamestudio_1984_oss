@@ -1,0 +1,81 @@
+{
+  "version": "oss",
+  "workspace_dir": "./workspace",
+  "model": {
+    "default": "gemini-2.5-flash-lite-preview-09-2025"
+  },
+  "max_retries": 3,
+  "max_consecutive_errors": 3,
+  "max_global_tool_errors": 50,
+  "token_limit": 1000000,
+  "max_total_tokens": 5000000,
+  "default_timeout_seconds": 300,
+  "platform": {
+    "screen_width": 360,
+    "screen_height": 540,
+    "controller_height": 100,
+    "total_height": 640,
+    "target_fps": 60
+  },
+  "tools": {
+    "geckodriver_path": "/home/gemini/firefox/geckodriver",
+    "dotter_path": "./tools/doteditor",
+    "synthesizer_path": "./tools/synthesizer",
+    "firefoxtester_path": "./tools/firefoxtester"
+  },
+  "workflow_settings": {
+    "enforce_asset_first": true,
+    "max_fix_iterations": 3,
+    "validate_assets_before_programming": false
+  },
+  "roles": [
+    "designer",
+    "programmer",
+    "graphic_artist",
+    "sound_artist",
+    "tester",
+    "manager"
+  ],
+  "file_permissions": {
+    "_comment": "File write permissions for each agent role. Glob patterns supported (**, *). Omit this section to use defaults from tools/permissions.py",
+    "manager": {
+      "writable_patterns": [
+        "/work/workflow.json",
+        "/work/*.json"
+      ]
+    },
+    "designer": {
+      "writable_patterns": [
+        "/work/design.json",
+        "/work/asset_spec.json",
+        "/work/game_concept.json"
+      ]
+    },
+    "programmer": {
+      "writable_patterns": [
+        "/public/index.html",
+        "/public/style.css",
+        "/public/game.js",
+        "/public/**/*"
+      ]
+    },
+    "graphic_artist": {
+      "writable_patterns": [
+        "/public/assets/images/**/*",
+        "/work/sprite_*.json"
+      ]
+    },
+    "sound_artist": {
+      "writable_patterns": [
+        "/public/assets/sounds/**/*",
+        "/work/sound_*.json"
+      ]
+    },
+    "tester": {
+      "writable_patterns": [
+        "/work/test/**/*",
+        "/public/index.html"
+      ]
+    }
+  }
+}
