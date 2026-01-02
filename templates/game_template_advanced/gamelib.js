@@ -1423,7 +1423,7 @@ class UIManager {
         this.ctx.globalAlpha = 1.0;
     }
 
-    drawGameOver(score = 0) {
+    drawGameOver(score = 0, canAcceptInput = true) {
         const w = this.canvas.width;
         const h = this.canvas.height;
 
@@ -1443,13 +1443,15 @@ class UIManager {
         this.ctx.font = 'bold 24px monospace';
         this.ctx.fillText(`SCORE: ${score}`, w / 2, h / 2);
 
-        // Restart instruction
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '14px monospace';
-        const blinkAlpha = (Math.sin(Date.now() / 500) + 1) / 2;
-        this.ctx.globalAlpha = blinkAlpha;
-        this.ctx.fillText('PRESS SPACE OR CLICK TO RESTART', w / 2, h * 2 / 3);
-        this.ctx.globalAlpha = 1.0;
+        // Restart instruction (only show when input is accepted)
+        if (canAcceptInput) {
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '14px monospace';
+            const blinkAlpha = (Math.sin(Date.now() / 500) + 1) / 2;
+            this.ctx.globalAlpha = blinkAlpha;
+            this.ctx.fillText('PRESS SPACE OR CLICK TO RESTART', w / 2, h * 2 / 3);
+            this.ctx.globalAlpha = 1.0;
+        }
     }
 
     drawScore(score, x = 10, y = 20) {
@@ -1505,7 +1507,7 @@ class UIManager {
     /**
      * v0.7: Draw game clear screen (all stages completed)
      */
-    drawGameClear(score = 0) {
+    drawGameClear(score = 0, canAcceptInput = true) {
         const w = this.canvas.width;
         const h = this.canvas.height;
 
@@ -1530,13 +1532,15 @@ class UIManager {
         this.ctx.font = 'bold 24px monospace';
         this.ctx.fillText(`FINAL SCORE: ${score}`, w / 2, h / 2 + 20);
 
-        // Return to title instruction
-        this.ctx.fillStyle = '#fff';
-        this.ctx.font = '14px monospace';
-        const blinkAlpha = (Math.sin(Date.now() / 500) + 1) / 2;
-        this.ctx.globalAlpha = blinkAlpha;
-        this.ctx.fillText('PRESS SPACE OR CLICK TO RETURN', w / 2, h * 2 / 3 + 40);
-        this.ctx.globalAlpha = 1.0;
+        // Return to title instruction (only show when input is accepted)
+        if (canAcceptInput) {
+            this.ctx.fillStyle = '#fff';
+            this.ctx.font = '14px monospace';
+            const blinkAlpha = (Math.sin(Date.now() / 500) + 1) / 2;
+            this.ctx.globalAlpha = blinkAlpha;
+            this.ctx.fillText('PRESS SPACE OR CLICK TO RETURN', w / 2, h * 2 / 3 + 40);
+            this.ctx.globalAlpha = 1.0;
+        }
     }
 
     /**
@@ -1758,19 +1762,21 @@ class GameEngine {
             this.updateGame(deltaTime / 1000);
             this.drawGame(this.ctx);
         } else if (this.stateManager.is(GameStateManager.STATES.GAME_OVER)) {
-            this.uiManager.drawGameOver(this.score);
+            const canAcceptInput = this.stateManager.canAcceptInput(3000);
+            this.uiManager.drawGameOver(this.score, canAcceptInput);
 
             // Transition to title on input (wait 3 seconds before accepting)
-            if (this.controller.isJustPressed('a') && this.stateManager.canAcceptInput(3000)) {
+            if (this.controller.isJustPressed('a') && canAcceptInput) {
                 this.stateManager.setState(GameStateManager.STATES.TITLE);
                 this.controller.reset();
             }
         } else if (this.stateManager.is(GameStateManager.STATES.GAME_CLEAR)) {
             // v0.7: Game clear screen (victory)
-            this.uiManager.drawGameClear(this.score);
+            const canAcceptInput = this.stateManager.canAcceptInput(3000);
+            this.uiManager.drawGameClear(this.score, canAcceptInput);
 
             // Transition to title on input (wait 3 seconds before accepting)
-            if (this.controller.isJustPressed('a') && this.stateManager.canAcceptInput(3000)) {
+            if (this.controller.isJustPressed('a') && canAcceptInput) {
                 this.stateManager.setState(GameStateManager.STATES.TITLE);
                 this.controller.reset();
             }
