@@ -239,6 +239,187 @@ def read_binary_file_impl(
         return f"❌ Error: {e}"
 
 
+def inspect_image_metadata_impl(
+    project_root: str,
+    file_path: str
+) -> str:
+    """
+    Get PNG image dimensions and basic info without base64 encoding.
+
+    Returns metadata only, saving tokens compared to full base64 encoding.
+
+    Args:
+        project_root: Project root directory
+        file_path: File path relative to project root
+
+    Returns:
+        String containing image metadata (dimensions, file size), or error message
+    """
+    try:
+        rel_path, full_path = normalize_path_safe(file_path, project_root)
+    except ValueError as e:
+        return f"❌ Error: {e}"
+
+    if not os.path.exists(full_path):
+        return f"❌ Error: File not found: {rel_path}"
+
+    try:
+        with open(full_path, 'rb') as f:
+            # Read PNG header to get dimensions
+            # PNG format: 8-byte signature + IHDR chunk
+            signature = f.read(8)
+
+            # Verify PNG signature
+            if signature != b'\x89PNG\r\n\x1a\n':
+                return f"❌ Error: Not a valid PNG file: {rel_path}"
+
+            # Read IHDR chunk (first chunk after signature)
+            # Skip chunk length (4 bytes)
+            f.read(4)
+            # Verify chunk type is IHDR
+            chunk_type = f.read(4)
+            if chunk_type != b'IHDR':
+                return f"❌ Error: Invalid PNG structure: {rel_path}"
+
+            # Read width and height (4 bytes each, big-endian)
+            width_bytes = f.read(4)
+            height_bytes = f.read(4)
+
+            width = int.from_bytes(width_bytes, byteorder='big')
+            height = int.from_bytes(height_bytes, byteorder='big')
+
+        # Get file size
+        file_size = os.path.getsize(full_path)
+
+        return f"✅ Image: {rel_path}\n   Dimensions: {width}x{height}\n   File size: {file_size} bytes"
+
+    except Exception as e:
+        return f"❌ Error: {e}"
+
+
+def inspect_audio_metadata_impl(
+    project_root: str,
+    file_path: str
+) -> str:
+    """
+    Get WAV audio metadata and silence detection without base64 encoding.
+
+    Analyzes audio to detect silence and provide basic metadata,
+    saving tokens compared to full base64 encoding.
+
+    Args:
+        project_root: Project root directory
+        file_path: File path relative to project root
+
+    Returns:
+        String containing audio metadata (duration, silence status, peak amplitude), or error message
+    """
+    try:
+        rel_path, full_path = normalize_path_safe(file_path, project_root)
+    except ValueError as e:
+        return f"❌ Error: {e}"
+
+    if not os.path.exists(full_path):
+        return f"❌ Error: File not found: {rel_path}"
+
+    try:
+        with open(full_path, 'rb') as f:
+            # Read WAV header
+            # RIFF header
+            riff = f.read(4)
+            if riff != b'RIFF':
+                return f"❌ Error: Not a valid WAV file: {rel_path}"
+
+            file_size_header = f.read(4)
+            wave = f.read(4)
+            if wave != b'WAVE':
+                return f"❌ Error: Not a valid WAV file: {rel_path}"
+
+            # Find fmt chunk
+            while True:
+                chunk_id = f.read(4)
+                if not chunk_id:
+                    return f"❌ Error: Invalid WAV structure: {rel_path}"
+
+                chunk_size = int.from_bytes(f.read(4), byteorder='little')
+
+                if chunk_id == b'fmt ':
+                    # Read format chunk
+                    audio_format = int.from_bytes(f.read(2), byteorder='little')
+                    num_channels = int.from_bytes(f.read(2), byteorder='little')
+                    sample_rate = int.from_bytes(f.read(4), byteorder='little')
+                    byte_rate = int.from_bytes(f.read(4), byteorder='little')
+                    block_align = int.from_bytes(f.read(2), byteorder='little')
+                    bits_per_sample = int.from_bytes(f.read(2), byteorder='little')
+
+                    # Skip any extra format bytes
+                    if chunk_size > 16:
+                        f.read(chunk_size - 16)
+                    break
+                else:
+                    # Skip this chunk
+                    f.read(chunk_size)
+
+            # Find data chunk
+            while True:
+                chunk_id = f.read(4)
+                if not chunk_id:
+                    return f"❌ Error: No data chunk found: {rel_path}"
+
+                chunk_size = int.from_bytes(f.read(4), byteorder='little')
+
+                if chunk_id == b'data':
+                    # Read audio data
+                    audio_data = f.read(chunk_size)
+                    break
+                else:
+                    # Skip this chunk
+                    f.read(chunk_size)
+
+            # Calculate duration
+            num_samples = len(audio_data) // (num_channels * (bits_per_sample // 8))
+            duration = num_samples / sample_rate
+
+            # Analyze for silence (check peak amplitude)
+            max_amplitude = 0
+            bytes_per_sample = bits_per_sample // 8
+
+            # Sample every 100th frame to save processing time
+            for i in range(0, len(audio_data) - bytes_per_sample, bytes_per_sample * 100):
+                if bytes_per_sample == 1:
+                    # 8-bit unsigned
+                    sample = audio_data[i] - 128
+                    max_amplitude = max(max_amplitude, abs(sample))
+                elif bytes_per_sample == 2:
+                    # 16-bit signed
+                    sample = int.from_bytes(audio_data[i:i+2], byteorder='little', signed=True)
+                    max_amplitude = max(max_amplitude, abs(sample))
+
+            # Determine if silent (threshold: less than 1% of max amplitude)
+            max_possible = (2 ** (bits_per_sample - 1)) - 1
+            peak_ratio = max_amplitude / max_possible if max_possible > 0 else 0
+            is_silent = peak_ratio < 0.01
+
+            silence_status = "⚠️ SILENT" if is_silent else "✅ NOT_SILENT"
+
+        # Get file size
+        file_size = os.path.getsize(full_path)
+
+        return (
+            f"✅ Audio: {rel_path}\n"
+            f"   Duration: {duration:.3f}s\n"
+            f"   Sample rate: {sample_rate} Hz\n"
+            f"   Channels: {num_channels}\n"
+            f"   Bits per sample: {bits_per_sample}\n"
+            f"   Peak amplitude: {peak_ratio:.2%}\n"
+            f"   Status: {silence_status}\n"
+            f"   File size: {file_size} bytes"
+        )
+
+    except Exception as e:
+        return f"❌ Error: {e}"
+
+
 def file_edit_impl(
     project_root: str,
     file_path: str,

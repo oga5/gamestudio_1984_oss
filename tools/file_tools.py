@@ -11,6 +11,8 @@ from langchain_core.tools import tool
 from .file_tools_impl import (
     read_file_impl,
     read_binary_file_impl,
+    inspect_image_metadata_impl,
+    inspect_audio_metadata_impl,
     file_edit_impl,
     replace_file_impl,
     ls_dir_impl,
@@ -87,31 +89,46 @@ def read_file(file_path: str, start_line: int = None, end_line: int = None) -> s
 @tool
 def inspect_image(file_path: str) -> str:
     """
-    Read a PNG image file to analyze its content/dimensions.
-    Use to verify generated sprites match expectations.
+    Get PNG image dimensions and metadata (no base64).
+    Use to verify generated sprites match size expectations.
 
     Args:
         file_path: Project-relative path (e.g., "/public/assets/images/player.png")
 
     Returns:
-        Image data for visual inspection
+        Image metadata: dimensions, file size
+
+    Example output:
+        ✅ Image: public/assets/images/player.png
+           Dimensions: 32x32
+           File size: 176 bytes
     """
-    return read_binary_file_impl(_get_project_root(), file_path)
+    return inspect_image_metadata_impl(_get_project_root(), file_path)
 
 
 @tool
 def inspect_audio(file_path: str) -> str:
     """
-    Read a WAV audio file to analyze its content.
-    Use to verify generated sound effects.
+    Get WAV audio metadata and silence detection (no base64).
+    Use to verify generated sound is not silent and has correct properties.
 
     Args:
         file_path: Project-relative path (e.g., "/public/assets/sounds/shoot.wav")
 
     Returns:
-        Audio data for analysis
+        Audio metadata: duration, sample rate, silence status, peak amplitude
+
+    Example output:
+        ✅ Audio: public/assets/sounds/shoot.wav
+           Duration: 0.500s
+           Sample rate: 44100 Hz
+           Channels: 1
+           Bits per sample: 16
+           Peak amplitude: 78%
+           Status: ✅ NOT_SILENT
+           File size: 44144 bytes
     """
-    return read_binary_file_impl(_get_project_root(), file_path)
+    return inspect_audio_metadata_impl(_get_project_root(), file_path)
 
 
 @tool

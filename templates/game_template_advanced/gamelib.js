@@ -54,11 +54,13 @@ class GameStateManager {
 
     constructor() {
         this.current = GameStateManager.STATES.LOADING;
+        this.stateTransitionTime = Date.now();
     }
 
     setState(newState) {
         if (Object.values(GameStateManager.STATES).includes(newState)) {
             this.current = newState;
+            this.stateTransitionTime = Date.now();
         } else {
             throw new Error(`Invalid state: ${newState}. Valid states are: ${Object.values(GameStateManager.STATES).join(', ')}`);
         }
@@ -66,6 +68,15 @@ class GameStateManager {
 
     is(state) {
         return this.current === state;
+    }
+
+    /**
+     * Check if enough time has passed since state transition to accept input
+     * @param {number} minimumDelay - Minimum delay in milliseconds
+     * @returns {boolean} True if input can be accepted
+     */
+    canAcceptInput(minimumDelay = 0) {
+        return (Date.now() - this.stateTransitionTime) >= minimumDelay;
     }
 }
 
@@ -1621,11 +1632,17 @@ class GameEngine {
                 this.stateManager.setState(GameStateManager.STATES.PLAYING);
                 this.controller.reset();
             } else if (this.stateManager.is(GameStateManager.STATES.GAME_OVER)) {
-                this.stateManager.setState(GameStateManager.STATES.TITLE);
-                this.controller.reset();
+                // Wait 3 seconds before accepting input
+                if (this.stateManager.canAcceptInput(3000)) {
+                    this.stateManager.setState(GameStateManager.STATES.TITLE);
+                    this.controller.reset();
+                }
             } else if (this.stateManager.is(GameStateManager.STATES.GAME_CLEAR)) {
-                this.stateManager.setState(GameStateManager.STATES.TITLE);
-                this.controller.reset();
+                // Wait 3 seconds before accepting input
+                if (this.stateManager.canAcceptInput(3000)) {
+                    this.stateManager.setState(GameStateManager.STATES.TITLE);
+                    this.controller.reset();
+                }
             }
         });
     }
@@ -1743,8 +1760,8 @@ class GameEngine {
         } else if (this.stateManager.is(GameStateManager.STATES.GAME_OVER)) {
             this.uiManager.drawGameOver(this.score);
 
-            // Transition to title on input
-            if (this.controller.isJustPressed('a')) {
+            // Transition to title on input (wait 3 seconds before accepting)
+            if (this.controller.isJustPressed('a') && this.stateManager.canAcceptInput(3000)) {
                 this.stateManager.setState(GameStateManager.STATES.TITLE);
                 this.controller.reset();
             }
@@ -1752,8 +1769,8 @@ class GameEngine {
             // v0.7: Game clear screen (victory)
             this.uiManager.drawGameClear(this.score);
 
-            // Transition to title on input
-            if (this.controller.isJustPressed('a')) {
+            // Transition to title on input (wait 3 seconds before accepting)
+            if (this.controller.isJustPressed('a') && this.stateManager.canAcceptInput(3000)) {
                 this.stateManager.setState(GameStateManager.STATES.TITLE);
                 this.controller.reset();
             }
