@@ -168,13 +168,78 @@ When creating workflow, ensure:
 - Include all phases as shown in template below
 
 **For CONTINUOUS DEVELOPMENT (game.js exists)**:
-- Check if user request needs new assets:
-  - If request mentions "new sprites", "new images", "new sounds", "add graphics", etc.: Include asset phases
-  - If request is about bugs, improvements, features using existing assets: Skip asset phases
+- **CRITICAL**: You MUST determine if new assets are needed BEFORE creating the workflow
+- Check if user request needs new assets using the criteria below
 - Simplified workflow based on request type:
-  - **Error fix**: Programmer (fix_error) → Tester (test_game)
-  - **Improvement**: Programmer (improve_game) → Tester (test_game)
+  - **Error fix (no new assets)**: Programmer (fix_error) → Tester (test_game)
+  - **Improvement (no new assets)**: Programmer (improve_game) → Tester (test_game)
   - **With new assets**: Designer (create_asset_list) → Artists (generate_sprites/sounds) → Programmer (improve_game) → Tester
+
+### Step 2.1: Asset Requirement Analysis (IMPORTANT)
+
+**You MUST skip `create_asset_list`, `generate_sprites`, and `generate_sounds` tasks when new assets are NOT needed.**
+
+#### Cases where NEW ASSETS are NOT needed (SKIP asset tasks):
+
+1. **Controls/Input improvements**:
+   - Adjusting keyboard/mouse controls
+   - Adding new key bindings
+   - Changing input sensitivity
+   - Adding input delay or debounce
+
+2. **Game logic adjustments**:
+   - Fixing bugs in game logic
+   - Adjusting difficulty (speed, timing, spawn rates)
+   - Changing scoring system
+   - Modifying collision detection
+   - Adjusting physics parameters
+
+3. **UI/UX improvements (using existing assets)**:
+   - Repositioning UI elements
+   - Changing text content
+   - Adjusting game state transitions
+   - Adding screen shake or visual effects (using code)
+
+4. **Performance/Code quality**:
+   - Refactoring code
+   - Fixing memory leaks
+   - Optimizing rendering
+
+5. **Game balance**:
+   - Changing player/enemy stats
+   - Adjusting spawn patterns
+   - Modifying power-up effects
+
+#### Cases where NEW ASSETS ARE needed (INCLUDE asset tasks):
+
+1. **New visual content**:
+   - Adding new characters or enemies
+   - Adding new background images
+   - Creating new power-up sprites
+   - Adding explosion/effect animations
+
+2. **New audio content**:
+   - Adding new sound effects
+   - Adding new background music
+   - Creating new voice/notification sounds
+
+3. **Major feature additions requiring new visuals**:
+   - Adding new game stages with different themes
+   - Introducing new weapon types with unique appearances
+   - Adding cutscenes or story elements
+
+#### Decision Rule:
+
+```
+IF user_request involves:
+  - Controls, input, operability → NO new assets
+  - Bug fixes, logic adjustments → NO new assets
+  - Code refactoring, optimization → NO new assets
+  - Game balance, difficulty → NO new assets
+  - New visual elements explicitly mentioned → YES new assets
+  - New sound effects explicitly mentioned → YES new assets
+THEN create workflow accordingly
+```
 
 ### Step 3: Read Existing State (for continuous development)
 
@@ -379,16 +444,18 @@ Use the template shown above with all phases.
 
 ❌ Not checking if game.js exists (missing project type detection)
 ❌ Including full design phase for simple fixes
-❌ Including asset phases when no new assets needed
-❌ Programmer before Graphic Artist (violates asset-first rule)
-❌ Programmer before Sound Artist (violates asset-first rule)
+❌ **Including asset phases (create_asset_list, generate_sprites, generate_sounds) when no new assets needed**
+❌ Programmer before Graphic Artist (violates asset-first rule when assets ARE needed)
+❌ Programmer before Sound Artist (violates asset-first rule when assets ARE needed)
 ❌ Missing dependencies
 ❌ Wrong agent/task names
+❌ **Not analyzing user request to determine if new assets are required**
 
 ✅ Check project type first (new vs existing)
-✅ Use minimal workflow for fixes/improvements
-✅ Skip asset phases when not needed
-✅ Correct phase ordering (Design → Assets → Code → Test)
+✅ **Analyze user request for asset requirements using Step 2.1 criteria**
+✅ Use minimal workflow for fixes/improvements (Programmer → Tester only)
+✅ **Skip create_asset_list, generate_sprites, generate_sounds for operability/logic changes**
+✅ Correct phase ordering (Design → Assets → Code → Test) when assets are needed
 ✅ Proper dependencies
-✅ Asset-first rule enforced when assets are needed
+✅ Asset-first rule enforced only when assets are actually needed
 ✅ Validation between assets and code

@@ -120,6 +120,30 @@ The system automatically:
 Design → Assets → Implementation → Testing
 ```
 
+### Continuous Development (No New Assets)
+```
+Programmer (improve_game or fix_error) → Testing
+```
+
+**Use this pattern when:**
+- Improving controls or input handling
+- Fixing bugs or adjusting game logic
+- Changing game balance or difficulty
+- Refactoring code or optimizing performance
+- Adjusting UI layout or text (using existing assets)
+
+**SKIP these tasks**: `create_asset_list`, `generate_sprites`, `generate_sounds`
+
+### Continuous Development (With New Assets)
+```
+Design (create_asset_list) → Assets → Programmer (improve_game) → Testing
+```
+
+**Use this pattern when:**
+- Adding new visual content (sprites, backgrounds)
+- Adding new audio content (sounds, music)
+- Introducing new game elements that require new graphics
+
 ### Bug Fix Iteration
 ```
 Testing → Programmer (fix_bugs) → Testing
