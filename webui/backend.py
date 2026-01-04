@@ -3800,4 +3800,4 @@ async def get_workspace_file(file_path: str):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8087)
+    uvicorn.run(app, host="0.0.0.0", port=8089)

@@ -28,7 +28,7 @@ cd webui
 python backend.py
 ```
 
-サーバーは `http://localhost:8080` で起動します。
+サーバーは `http://localhost:8089` で起動します。
 
 ### Webインターフェース
 
