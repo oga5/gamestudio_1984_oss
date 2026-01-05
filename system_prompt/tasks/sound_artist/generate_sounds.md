@@ -56,39 +56,40 @@ Before finishing:
 
 **Sound Design Philosophy**:
 - Channel the spirit of 1984 arcade audio (Space Invaders, Pac-Man, Galaga, Donkey Kong)
-- Use simple, pure waveforms (sine, square, sawtooth)
-- Create punchy sounds with immediate attack
+- Use simple, pure waveforms (sine, square, sawtooth, triangle)
+- Create punchy sounds with immediate attack (<0.01s)
 - Keep durations short (most SFX < 0.5 seconds)
-- Use pitch modulation for classic arcade character
+- Use pitch modulation for emotional impact
 - Think: "How would this sound through an arcade cabinet speaker?"
 
-**Technical Approach Based on Description**:
-- **"shoot/laser"** → Descending pitch sweep (C5 → C4), sine or square wave, 0.15-0.3s
-- **"explosion"** → Drum hits (Kick + Snare) or noise burst, 0.2-0.4s
-- **"jump"** → Rising pitch (C4 → E4/G4), square wave, 0.15-0.25s
-- **"collect/coin/powerup"** → Ascending arpeggio (C4 → E4 → G4 → C5), 0.3-0.6s
-- **"hit/damage"** → Descending pitch or harsh noise, 0.1-0.2s
-- **"menu/UI"** → Single blip or two-note, 0.05-0.15s
+**Design from Emotion and Context**:
+Instead of following templates, interpret the audio_details to create original sounds:
+- Study the **character** (personality and quality)
+- Implement the **pitch_envelope** (how pitch changes)
+- Choose appropriate **timbre** (waveform and tone)
+- Match the **mood** (emotion to convey)
+- Reference **inspiration** (classic games) for authenticity, not imitation
+
+**Creative Questions to Ask**:
+- What emotion does this action evoke?
+- How can simple waveforms express this uniquely?
+- What would surprise yet still feel "1984 arcade"?
+- Does this sound match the game's unique character?
 
 ### Step 3: Generate Sound
+
+Call `generate_sound()` with appropriate JSON pattern:
+- Choose BPM and patternLength for desired duration: `duration = (patternLength / bpm) * 60`
+- Select waveforms that match the timbre described
+- Design note patterns that implement the pitch_envelope
+- Set volumes to create appropriate dynamics
+- Use multiple tracks if needed for richness
+
+Example tool call structure:
 ```
 generate_sound(
   "/public/assets/sounds/[name from spec]",
-  '{
-    "bpm": 300,
-    "patternLength": 2,
-    "masterVolume": 0.8,
-    "tracks": {
-      "melody": {
-        "volume": 1.0,
-        "waveform": "sine",
-        "data": {
-          "C5": [true, false],
-          "C4": [false, true]
-        }
-      }
-    }
-  }'
+  '[JSON pattern based on audio_details]'
 )
 ```
 
@@ -98,84 +99,32 @@ validate_asset("/public/assets/sounds/[name]")
 # Should return: "VALID: /public/assets/sounds/[name]"
 ```
 
-## 1984 Arcade Sound Recipes
+## Sound Pattern Design Guidelines
 
-**Laser/Shoot (Space Invaders/Galaga style)**:
-```json
-{
-  "bpm": 300,
-  "patternLength": 2,
-  "masterVolume": 0.8,
-  "tracks": {
-    "melody": {
-      "volume": 1.0,
-      "waveform": "sine",
-      "data": {
-        "C5": [true, false],
-        "C4": [false, true]
-      }
-    }
-  }
-}
-```
+**Track Types Available**:
+- **melody/bass**: Use waveforms (sine, square, sawtooth, triangle) with note data
+- **drum**: Use percussion (Kick, Snare, Hi-Hat, Clap) for impacts
+- **chord**: Use chord names (C, Dm, Em, F, G, Am, Bdim, C7) for harmony
+- **fm**: Use FM synthesis (ratio and depth) for complex tones
 
-**Explosion (Arcade impact)**:
-```json
-{
-  "bpm": 240,
-  "patternLength": 3,
-  "masterVolume": 0.9,
-  "tracks": {
-    "drum": {
-      "volume": 1.0,
-      "data": {
-        "Kick": [true, true, false],
-        "Snare": [false, true, true]
-      }
-    }
-  }
-}
-```
+**Duration Control**:
+- Formula: `duration = (patternLength / bpm) * 60` seconds
+- Short SFX: BPM 240-360, patternLength 2-4 → 0.2-0.5s
+- Medium SFX: BPM 180-240, patternLength 4-8 → 0.5-1.5s
+- Long SFX: BPM 120-180, patternLength 8-16 → 2-5s
 
-**Jump/Bounce (Donkey Kong style)**:
-```json
-{
-  "bpm": 360,
-  "patternLength": 2,
-  "masterVolume": 0.7,
-  "tracks": {
-    "melody": {
-      "volume": 0.9,
-      "waveform": "square",
-      "data": {
-        "C4": [true, false],
-        "E4": [false, true]
-      }
-    }
-  }
-}
-```
+**Waveform Characteristics**:
+- **Sine**: Smooth, pure tone - can be ethereal or piercing
+- **Square**: Classic chip sound - harsh, 8-bit character
+- **Sawtooth**: Bright, energetic - cuts through mix
+- **Triangle**: Mellow, warm - good for bass
 
-**Power-Up/Collect (Pac-Man style)**:
-```json
-{
-  "bpm": 240,
-  "patternLength": 4,
-  "masterVolume": 0.75,
-  "tracks": {
-    "melody": {
-      "volume": 0.9,
-      "waveform": "sine",
-      "data": {
-        "C4": [true, false, false, false],
-        "E4": [false, true, false, false],
-        "G4": [false, false, true, false],
-        "C5": [false, false, false, true]
-      }
-    }
-  }
-}
-```
+**Design Approach**:
+1. Read the audio_details carefully
+2. Interpret the emotional intent
+3. Choose appropriate waveforms and patterns
+4. Create original sound that fits the game's unique character
+5. Don't rely on templates - design from the specification
 
 ## Validation Checklist
 

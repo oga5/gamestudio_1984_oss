@@ -89,7 +89,7 @@ cd webui
 python backend.py
 ```
 
-2. ブラウザで `http://localhost:8087` にアクセス
+2. ブラウザで `http://localhost:8089` にアクセス
 
 3. ゲームのプロンプトを入力して「Start Agent」をクリック
 

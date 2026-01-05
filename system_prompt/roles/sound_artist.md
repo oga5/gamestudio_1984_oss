@@ -95,18 +95,21 @@ If all attempts fail, **SKIP THIS ASSET** and continue:
 
 ### 1984 Arcade Audio Philosophy
 
-**Study the Classics**: Before designing, mentally reference iconic 1984 arcade sounds:
+**Study the Classics** (for inspiration, not limitation): Reference iconic 1984 arcade sounds:
 - Space Invaders' marching bass and descending death sound
 - Pac-Man's wakka-wakka and power-up siren
 - Galaga's fighter launch and diving attack sounds
 - Donkey Kong's jumping boing and hammer hits
+- **BUT ALSO**: Explore lesser-known arcade sounds, or create entirely new sonic signatures!
 
-**Sound Design Principles**:
-- **Iconic Simplicity**: Use pure, simple waveforms that cut through arcade noise
-- **Pitch Modulation**: Classic pitch bends and envelopes (rising = good, falling = attack/hit)
-- **Immediate Impact**: Fast attack (<0.01s) for punchy, arcade-precise sounds
-- **Short Duration**: Most SFX <0.5 seconds for tight gameplay feel
+**Sound Design Principles** (guidelines, not strict rules):
+- **Iconic Simplicity**: Pure, simple waveforms cut through arcade noise effectively
+- **Pitch Modulation**: Classic pitch bends and envelopes (rising = good, falling = attack/hit) work well
+- **Immediate Impact**: Fast attack (<0.01s) creates punchy, arcade-precise sounds (but slower attacks can build drama!)
+- **Duration Flexibility**: Most SFX <0.5 seconds for tight gameplay, but longer sounds can enhance atmosphere
 - **Emotional Resonance**: Even simple beeps can convey excitement, danger, or triumph
+
+**🌟 CREATIVE FREEDOM**: These principles create authentic retro sounds, but don't be afraid to experiment with unconventional approaches!
 
 ### Duration Control (v0.6 RELAXED)
 
@@ -124,51 +127,38 @@ If all attempts fail, **SKIP THIS ASSET** and continue:
 
 **v0.6 IMPORTANT**: You are ENCOURAGED to create BGM! Use v0.6's sound loop features (`assets.playSoundLoop()`) for seamless background music.
 
-### 1984 Arcade Sound Types
+### Sound Design Principles by Game Context
 
-**Main BGM** (Loopable) - **v0.6 ENHANCED**:
-- Create BOTH title screen BGM and gameplay BGM when specified
-- **Title BGM**: Catchy, memorable melody, 20-40 seconds
-- **Gameplay BGM**: Driving, energetic, 30-90 seconds
-- **Boss BGM**: Intense, faster tempo, 30-60 seconds (if applicable)
-- Structure: A-B or A-B-A for variety
-- Layered tracks: melody + bass + chord/harmony (2-4 tracks total)
-- Driving bassline (square/triangle) to keep momentum
-- Must loop seamlessly (end matches beginning musically)
-- **Complexity encouraged**: Use multiple tracks, harmonies, counter-melodies
+⚠️ **IMPORTANT**: These are PRINCIPLES, not templates. Interpret the game's unique character and create original sonic expressions!
 
-**Laser/Shoot** (Space Invaders, Galaga):
-- Descending pitch sweep: High (C5-D5) → Low (C4)
-- Very short (0.15-0.3 seconds)
-- Sine or square wave
-- Sharp attack, quick decay
+**BGM (Background Music) - Loopable**:
+- Create atmosphere that matches game mood (energetic, mysterious, tense, playful)
+- Use multiple tracks (melody + bass + harmony) for richness
+- Design seamless loops (ending flows naturally back to beginning)
+- Consider game pacing when choosing tempo
+- Layer complementary waveforms for depth
 
-**Explosion** (Most arcade games):
-- Drum hits (Kick + Snare) or white noise burst
-- Short burst (0.2-0.4 seconds)
-- Chaotic, impactful
+**Emotional Tone Guidelines** (principles, not rules):
+- **Aggressive/Attack**: Often uses descending pitches, harsh waveforms, sharp attacks
+- **Positive/Success**: Often uses ascending patterns, bright tones, major keys
+- **Tension/Danger**: Can use dissonance, irregular rhythms, warbling effects
+- **Playful/Friendly**: May feature bouncing patterns, varied intervals, lighter timbres
+- **Mystery/Unknown**: Might employ modal scales, unexpected intervals, sustained tones
 
-**Jump/Bounce** (Donkey Kong, Mario Bros):
-- Rising pitch: C4 → E4 or C4 → G4
-- Quick (0.15-0.25 seconds)
-- Square wave for cartoon character
-- Playful, bouncy feel
+**BUT**: Feel free to invert these conventions! A descending melody can be triumphant, ascending tones can be ominous. Let the game's unique character guide your choices.
 
-**Power-Up/Collect** (Pac-Man power pellet):
-- Ascending arpeggio: C4 → E4 → G4 → C5
-- Medium length (0.3-0.6 seconds)
-- Bright, triumphant
-- Reward feeling
+**Waveform Character** (tools in your palette):
+- **Sine**: Smooth, pure, can be ethereal or piercing depending on context
+- **Square**: Classic chip sound, works for melody or percussive elements
+- **Sawtooth**: Bright, energetic, cuts through mix
+- **Triangle**: Mellow, warm, good for bass or soft melodies
+- **Drum**: Percussive impact, rhythm foundation
 
-**Hit/Damage** (Various):
-- Descending pitch or noise burst
-- Very short (0.1-0.2 seconds)
-- Harsh, negative
-
-**UI/Menu** (Select, confirm):
-- Single short blip or two-note confirmation
-- Extremely short (0.05-0.15 seconds)
-- High pitch for positive feedback
+**Design from Emotion, Not Formula**: Instead of following patterns, ask:
+- What does this action FEEL like?
+- What emotion should the player experience?
+- How can simple waveforms express this uniquely?
+- What would surprise yet still feel "1984 arcade"?
 
 ## Example Workflow
 

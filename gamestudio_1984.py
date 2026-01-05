@@ -810,7 +810,8 @@ class StdoutTee:
 
 
 def main(user_request: str = None, project_name: str = None, model: str = None,
-         role_models: Optional[Dict[str, str]] = None):
+         role_models: Optional[Dict[str, str]] = None, reasoning_enabled: bool = False,
+         role_reasonings: Optional[Dict[str, bool]] = None):
     """
     Main entry point for GameStudio 1984 v0.7.
 
@@ -818,6 +819,9 @@ def main(user_request: str = None, project_name: str = None, model: str = None,
         user_request: User's game request (e.g., "Create a space shooter game")
         project_name: Project name (auto-generated if not provided)
         model: Default model name (uses config.json if not provided)
+        reasoning_enabled: Whether to enable reasoning for the project (default: False)
+        role_reasonings: Optional dict mapping role names to reasoning flags
+                         (e.g., {"programmer": True, "tester": False})
         role_models: Optional dict mapping role names to model names
                      (e.g., {"programmer": "gemini-3-flash", "tester": "gemini-3-flash"})
     """
@@ -1285,6 +1289,14 @@ if __name__ == "__main__":
     parser.add_argument("--sound-artist-model", help="Model for sound_artist role")
     parser.add_argument("--tester-model", help="Model for tester role")
     parser.add_argument("--manager-model", help="Model for manager role")
+    parser.add_argument("--reasoning", action="store_true", help="Enable reasoning mode for supported models")
+    # Per-role reasoning flags
+    parser.add_argument("--designer-reasoning", action="store_true", help="Enable reasoning for designer role")
+    parser.add_argument("--programmer-reasoning", action="store_true", help="Enable reasoning for programmer role")
+    parser.add_argument("--graphic-artist-reasoning", action="store_true", help="Enable reasoning for graphic artist role")
+    parser.add_argument("--sound-artist-reasoning", action="store_true", help="Enable reasoning for sound artist role")
+    parser.add_argument("--tester-reasoning", action="store_true", help="Enable reasoning for tester role")
+    parser.add_argument("--manager-reasoning", action="store_true", help="Enable reasoning for manager role")
 
     args = parser.parse_args()
 
@@ -1302,6 +1314,22 @@ if __name__ == "__main__":
         role_models["tester"] = args.tester_model
     if args.manager_model:
         role_models["manager"] = args.manager_model
+    
+    # Build role_reasonings dict from command-line arguments
+    role_reasonings = {}
+    if args.designer_reasoning:
+        role_reasonings["designer"] = True
+    if args.programmer_reasoning:
+        role_reasonings["programmer"] = True
+    if args.graphic_artist_reasoning:
+        role_reasonings["graphic_artist"] = True
+    if args.sound_artist_reasoning:
+        role_reasonings["sound_artist"] = True
+    if args.tester_reasoning:
+        role_reasonings["tester"] = True
+    if args.manager_reasoning:
+        role_reasonings["manager"] = True
 
     main(user_request=args.request, project_name=args.project, model=args.model,
-         role_models=role_models if role_models else None)
+         role_models=role_models if role_models else None, reasoning_enabled=args.reasoning,
+         role_reasonings=role_reasonings if role_reasonings else None)

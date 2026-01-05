@@ -96,6 +96,22 @@ See common.md for 1984 Arcade Aesthetic Philosophy. Key points:
 - : = new row
 - *N = repeat row N times
 
+### Complete Sample: 16x16 Rectangle (Technical Reference)
+```json
+{
+  "size": "16x16",
+  "colors": ["transparent", "#FF0000", "#880000"],
+  "pattern": "A16*4:A4B8A4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4B8A4:A16*4",
+  "rle": true
+}
+```
+This demonstrates RLE syntax: 4 transparent rows, rectangle with B(red) border and C(dark red) fill, 4 transparent rows.
+- Total: 16 rows (4 empty + 8 shape + 4 empty)
+- Each row width: 16 pixels (4+8+4 or 4+6+6)
+- Colors: B=outline, C=fill, A=transparent
+
+**Design YOUR Game's Characters**: Use this syntax knowledge to create sprites that match your game's unique theme and visual_details specification. Don't copy this rectangle - design original pixel art!
+
 ## Example Workflow
 
 ```

@@ -112,15 +112,16 @@ validate_asset("/public/assets/images/[name]")
 - : = new row
 - *N = repeat row N times
 
-**Example (16x16 Space Invaders style enemy)**:
+**Technical Example (16x16 Rectangle - for syntax reference only)**:
 ```json
 {
   "size": "16x16",
-  "colors": ["transparent", "#00FF00", "#008800"],
-  "pattern": "A16:A4B8A4:A2B4C4B4A2:AB2C8B2A:BC12B:BC12B:B4C4B4:B2C8B2:A2B8A2:A4C4A4:A16*6",
+  "colors": ["transparent", "#FF0000", "#880000"],
+  "pattern": "A16*4:A4B8A4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4B8A4:A16*4",
   "rle": true
 }
 ```
+This demonstrates syntax only. Design YOUR game's sprites based on visual_details specification - don't copy this rectangle!
 
 ## Validation Checklist
 
