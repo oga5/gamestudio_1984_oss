@@ -2,7 +2,8 @@
   "version": "oss",
   "workspace_dir": "./workspace",
   "model": {
-    "default": "gemini-2.5-flash-lite-preview-09-2025"
+    "default": "gemini-2.5-flash-lite-preview-09-2025",
+    "api_base": "http://localhost:4000/v1"
   },
   "max_retries": 3,
   "max_consecutive_errors": 3,

@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 
 # LLM and Agent imports
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain.agents.middleware import TodoListMiddleware, SummarizationMiddleware
 from langgraph.checkpoint.memory import MemorySaver
@@ -380,11 +381,30 @@ def create_game_agent(role: str, task: str, asset_context: str = "", session_id:
         system_prompt += f"\n\n---\n\n{asset_context}"
 
     # Create LLM (use provided model or fall back to config)
-    model_name = model if model else CONFIG.get("model", "gemini-2.0-flash-exp")
-    llm = ChatGoogleGenerativeAI(
-        model=model_name,
-        temperature=0,
-    )
+    # Use get_model_for_role to handle dict/string config correctly
+    model_name = model if model else get_model_for_role(normalized_role)
+    
+    # Check for api_base in config
+    model_config = CONFIG.get("model", {})
+    api_base = None
+    if isinstance(model_config, dict):
+        api_base = model_config.get("api_base")
+
+    if api_base:
+        # LiteLLM / OpenAI compatible endpoint
+        # Ensure we have some API key, even if it's a dummy for local LiteLLM
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "none"
+        llm = ChatOpenAI(
+            model=model_name,
+            temperature=0,
+            base_url=api_base,
+            api_key=api_key
+        )
+    else:
+        llm = ChatGoogleGenerativeAI(
+            model=model_name,
+            temperature=0,
+        )
 
     # Create middleware stack
     # Determine log directory (project_dir/logs)
