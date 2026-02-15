@@ -20,7 +20,7 @@ Specify all images and sounds needed for the game.
   "images": [
     {
       "id": 1,
-      "name": "player.png",
+      "name": "player.svg",
       "size": "32x32",
       "description": "Player character sprite - A detailed, multi-sentence description with specific visual guidance",
       "visual_details": {
@@ -121,13 +121,13 @@ Specify all images and sounds needed for the game.
 ## Common Asset Categories
 
 ### Typical Shooter Assets
-- **Images**: player.png, enemy.png, bullet.png, powerup.png
+- **Images**: player.svg, enemy.svg, bullet.png, powerup.png
 - **Sounds**:
   - **BGM**: bgm_title.wav (15-20 seconds, loopable), bgm_game.wav (20-30 seconds, loopable)
   - **SFX**: shoot.wav, explosion.wav, powerup.wav, hit.wav
 
 ### Typical Platformer Assets
-- **Images**: player.png, enemy.png, platform.png, coin.png
+- **Images**: player.svg, enemy.svg, platform.png, coin.png
 - **Sounds**:
   - **BGM**: bgm_game.wav (20-30 seconds, loopable)
   - **SFX**: jump.wav, collect.wav, hurt.wav, gameover.wav

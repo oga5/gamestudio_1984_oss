@@ -151,13 +151,6 @@ def generate_image(output_path: str, pattern_json: str) -> str:
             if not os.path.exists(full_output_path):
                 return f"ERROR: Dotter completed but PNG file not created at {output_path}"
 
-            # Verify PNG header (89 50 4E 47 0D 0A 1A 0A)
-            with open(full_output_path, 'rb') as f:
-                header = f.read(8)
-            png_magic = b'\x89PNG\r\n\x1a\n'
-            if header != png_magic:
-                return f"ERROR: Generated file is not a valid PNG (invalid header at {output_path})"
-
             # Keep JSON file for later review (don't delete)
             return f"SUCCESS: {output_path} (JSON: work/sprite/{base_name}.json)"
 

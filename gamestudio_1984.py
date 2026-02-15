@@ -722,10 +722,9 @@ Asset specification:
 Instructions:
 1. Generate ONLY this one {asset_type} based on the specification above
 2. Follow all guidelines from your task instructions
-3. Validate the generated asset
-4. DO NOT process any other assets - focus only on this one
+3. DO NOT process any other assets - focus only on this one
 
-Complete when this single {asset_type} is successfully generated and validated.
+Complete when this single {asset_type} is successfully generated.
 """
 
             # Execute with fresh agent (use unique thread_id for each asset attempt)

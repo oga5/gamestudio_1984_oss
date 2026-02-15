@@ -20,8 +20,8 @@ Generate a SINGLE image asset (PNG or SVG) based on the specification provided i
 ## Output
 
 - ONE file in `/public/assets/images/` matching the specification
-  - **If extension is .svg**: Use `generate_svg()`. Note: This tool renders SVG to PNG for game engine compatibility.
-  - **If extension is .png**: Use `generate_image()` with pixel patterns.
+  - **32x32 or larger**: ALWAYS use `generate_svg()`. Note: This tool renders SVG to PNG for game engine compatibility.
+  - **16x16 or smaller**: Use `generate_image()` with pixel patterns.
 
 ## CRITICAL: You MUST Use Tools
 
@@ -36,9 +36,9 @@ Before finishing:
 
 1. Read `/work/design.json` to check backgroundColor for contrast verification
 2. Study the asset specification from your task prompt (name, size, description, visual_details)
-3. Choose format based on filename extension:
-   - **.svg**: Use **SVG** (`generate_svg`) - BEST for complex geometric shapes, neon/vector styles, and 32x32+ sprites.
-   - **.png**: Use **Pixel Pattern** (`generate_image`) - Best for very small 8x8 or 16x16 pixel art.
+3. Choose format based on size:
+   - **32x32 or larger**: ALWAYS use **SVG** (`generate_svg`) - BEST for complex geometric shapes, neon/vector styles.
+   - **16x16 or smaller**: Use **Pixel Pattern** (`generate_image`) - Best for very small pixel art.
 4. Visualize the sprite as if designing for a 1984 arcade cabinet
 5. Design the graphic with 1984 arcade aesthetic
 6. **EXECUTE**: Call `generate_svg(output_path, svg_content)` OR `generate_image(output_path, pattern_json)`
@@ -62,7 +62,7 @@ Before finishing:
 </svg>
 ```
 
-## PNG Creation Guidelines (For > 32x32)
+## PNG Creation Guidelines (For 16x16 or smaller)
 
 - Use `generate_image` with RLE pattern.
 - Follow 1984 Arcade Aesthetic Philosophy.
