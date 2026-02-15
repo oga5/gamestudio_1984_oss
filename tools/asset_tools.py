@@ -8,7 +8,31 @@ without needing separate documentation files.
 import os
 import json
 import subprocess
+import hashlib
+import struct
 from langchain_core.tools import tool
+
+# Loop detection for generate_svg
+_generate_svg_call_history: dict[str, list[str]] = {}
+_LOOP_THRESHOLD = 3
+
+def _check_svg_loop_detected(output_path: str, svg_code: str) -> tuple[bool, str]:
+    """
+    Check if a loop has been detected for generate_svg.
+    """
+    global _generate_svg_call_history
+    svg_hash = hashlib.md5(svg_code.encode()).hexdigest()
+    if output_path not in _generate_svg_call_history:
+        _generate_svg_call_history[output_path] = []
+    history = _generate_svg_call_history[output_path]
+    same_svg_count = sum(1 for h in history if h == svg_hash)
+    history.append(svg_hash)
+    if len(history) > 10:
+        _generate_svg_call_history[output_path] = history[-10:]
+    if same_svg_count >= _LOOP_THRESHOLD - 1:
+        return (True, f"identical SVG called {same_svg_count + 1} times")
+    return (False, "")
+
 
 # Helper to get PROJECT_ROOT (must be set by main())
 def _get_project_root() -> str:
@@ -141,6 +165,166 @@ def generate_image(output_path: str, pattern_json: str) -> str:
             return f"ERROR: Dotter failed: {e.stderr}"
         except Exception as e:
             raise
+
+    except Exception as e:
+        return f"ERROR: {e}"
+
+
+@tool
+def generate_svg(output_path: str, svg_code: str) -> str:
+    """
+    Generate a PNG image from SVG code using resvg.
+
+    Best for larger or complex graphics (64x64+) where pixel patterns are hard to specify.
+    For small pixel art (32x32 or less), use generate_image instead.
+
+    Args:
+        output_path: Output path (e.g., "/public/assets/images/background.png")
+        svg_code: SVG markup string
+
+    Returns:
+        "SUCCESS: <path>" or "ERROR: <message>"
+
+    ## SVG Format
+
+    ```svg
+    <svg width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="64" height="64" fill="#1a1a2e"/>
+      <circle cx="32" cy="32" r="20" fill="#e94560"/>
+    </svg>
+    ```
+
+    ## REQUIRED Attributes
+    - width, height: Image dimensions in pixels (recommended: 64-256)
+    - xmlns: Must be "http://www.w3.org/2000/svg"
+
+    ## Tips
+    - Use generate_svg for: backgrounds, large enemies, UI elements, complex shapes
+    - Use generate_image for: small sprites (player, bullets, small items)
+    - Keep SVG simple - complex paths may render slowly
+    """
+    # Check for loop detection FIRST
+    is_loop, loop_reason = _check_svg_loop_detected(output_path, svg_code)
+    if is_loop:
+        return f"ERROR: LOOP DETECTED for '{output_path}' - {loop_reason}"
+
+    try:
+        # Validate SVG has required attributes
+        if 'xmlns=' not in svg_code and 'xmlns:' not in svg_code:
+            svg_code = svg_code.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ', 1)
+
+        # Try to import resvg_py
+        try:
+            import resvg_py
+        except ImportError:
+            return "ERROR: resvg_py not installed. Run: pip install resvg_py"
+
+        # Convert SVG to PNG bytes
+        try:
+            png_bytes = resvg_py.svg_to_bytes(svg_string=svg_code)
+        except Exception as e:
+            return f"ERROR: SVG rendering failed: {e}"
+
+        # Resolve output path
+        full_output_path = os.path.join(_get_project_root(), output_path.lstrip("/"))
+
+        # Create output directory
+        os.makedirs(os.path.dirname(full_output_path), exist_ok=True)
+
+        # Save PNG file (forced .png extension for engine compatibility)
+        if not full_output_path.endswith(".png"):
+            full_output_path = os.path.splitext(full_output_path)[0] + ".png"
+            output_path = os.path.splitext(output_path)[0] + ".png"
+
+        with open(full_output_path, 'wb') as f:
+            f.write(png_bytes)
+
+        # Save SVG source in /work/svg directory for later review
+        work_svg_dir = os.path.join(_get_project_root(), "work", "svg")
+        os.makedirs(work_svg_dir, exist_ok=True)
+
+        base_name = os.path.splitext(os.path.basename(output_path))[0]
+        svg_path = os.path.join(work_svg_dir, f"{base_name}.svg")
+
+        with open(svg_path, 'w') as f:
+            f.write(svg_code)
+
+        # Verify PNG and get dimensions
+        with open(full_output_path, 'rb') as f:
+            header = f.read(24)
+        png_magic = b'\x89PNG\r\n\x1a\n'
+        if header[:8] != png_magic:
+            return f"ERROR: Generated file is not a valid PNG"
+
+        width, height = struct.unpack('>II', header[16:24])
+
+        return f"SUCCESS: {output_path} ({width}x{height}) (SVG: work/svg/{base_name}.svg)"
+
+    except Exception as e:
+        return f"ERROR: {e}"
+
+
+# Loop detection for generate_sound
+_generate_sound_call_history: dict[str, int] = {}
+_SOUND_LOOP_THRESHOLD = 2
+
+def _check_sound_loop_detected(output_path: str) -> tuple[bool, str]:
+    """
+    Check if a loop has been detected for generate_sound.
+    """
+    global _generate_sound_call_history
+    if output_path not in _generate_sound_call_history:
+        _generate_sound_call_history[output_path] = 0
+    _generate_sound_call_history[output_path] += 1
+    call_count = _generate_sound_call_history[output_path]
+    if call_count >= _SOUND_LOOP_THRESHOLD:
+        return (True, f"sound tool called {call_count} times for same file")
+    return (False, "")
+
+
+@tool
+def generate_sfx(output_path: str, sfx_type: str, intensity: str = "medium",
+                 pitch: str = "mid", duration: float = None) -> str:
+    """
+    Generate a preset-based sound effect. Simpler than generate_sound() for common game SFX.
+
+    Args:
+        output_path: Where to save the WAV file (e.g., "/public/assets/sounds/explosion.wav")
+        sfx_type: Type of sound effect ("explosion", "laser", "hit", "powerup", "coin", "jump", "gameover", "victory", "damage", "select", "blip")
+        intensity: Intensity level - "low", "medium", or "high" (default: "medium")
+        pitch: Pitch level - "low", "mid", or "high" (default: "mid")
+        duration: Optional duration override in seconds
+
+    Returns:
+        "SUCCESS: <path>" or "ERROR: <message>"
+    """
+    is_loop, loop_reason = _check_sound_loop_detected(output_path)
+    if is_loop:
+        return f"ERROR: LOOP DETECTED for '{output_path}' - {loop_reason}"
+
+    try:
+        full_output_path = os.path.join(_get_project_root(), output_path.lstrip("/"))
+        os.makedirs(os.path.dirname(full_output_path), exist_ok=True)
+
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        sfx_script = os.path.join(script_dir, "synthesizer", "sfx_generator.py")
+
+        if not os.path.exists(sfx_script):
+            return f"ERROR: SFX generator script not found at {sfx_script}"
+
+        command = [
+            "python3", sfx_script,
+            sfx_type,
+            "-o", output_path.lstrip("/"),
+            "--intensity", intensity,
+            "--pitch", pitch,
+            "--root_dir", _get_project_root()
+        ]
+        if duration is not None:
+            command.extend(["--duration", str(duration)])
+
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        return f"SUCCESS: {output_path}"
 
     except Exception as e:
         return f"ERROR: {e}"

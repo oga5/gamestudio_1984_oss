@@ -199,10 +199,11 @@ this.ctx                               // 2D context
 - Use relative paths: `'assets/images/player.png'`
 - NOT absolute paths: `/assets/...` or `/public/assets/...`
 - Load ALL generated assets (designers created them for a reason)
+- **NOTE**: Even if `design.json` or `image_asset.json` specify `.svg` files, the Graphic Artist renders them as `.png` files. **ALWAYS load assets with the `.png` extension in your code.**
 
 ```javascript
 loadAssets() {
-    // Load all sprites
+    // Load all sprites (use .png even if specified as .svg in design)
     this.assets.loadImage('player', 'assets/images/player.png');
     this.assets.loadImage('enemy', 'assets/images/enemy.png');
 

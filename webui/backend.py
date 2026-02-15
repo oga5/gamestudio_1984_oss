@@ -1034,11 +1034,8 @@ async def root():
                 <div class="form-group">
                     <label for="model-select">Default Model:</label>
                     <select id="model-select" class="prompt-input" style="padding: 12px;">
-                        <option value="gemini-2.5-flash-lite-preview-09-2025" selected>gemini-2.5-flash-lite-preview-09-2025</option>
-                        <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                        <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                        <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
-                        <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
+                        <option value="gemini-3-flash-preview" selected>gemini-3-flash-preview</option>
+                        <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
                     </select>
                 </div>
                 <details style="margin-top: 10px;">
@@ -1047,66 +1044,48 @@ async def root():
                         <label for="designer-model">Designer:</label>
                         <select id="designer-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
-                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                             <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
+                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="programmer-model">Programmer:</label>
                         <select id="programmer-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
+                            <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
                             <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                            <option value="gemini-3-flash-preview" selected>gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="graphic-artist-model">Graphic Artist:</label>
                         <select id="graphic-artist-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
-                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                             <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
+                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="sound-artist-model">Sound Artist:</label>
                         <select id="sound-artist-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
-                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                             <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
+                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="tester-model">Tester:</label>
                         <select id="tester-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
+                            <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
                             <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                            <option value="gemini-3-flash-preview" selected>gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="manager-model">Manager:</label>
                         <select id="manager-model" class="prompt-input" style="padding: 12px;">
                             <option value="">Use default</option>
-                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
-                            <option value="gemini-2.5-flash-preview-09-2025">gemini-2.5-flash-preview-09-2025</option>
-                            <option value="gemini-2.5-pro">gemini-2.5-pro</option>
                             <option value="gemini-3-flash-preview">gemini-3-flash-preview</option>
-                            <option value="gemini-3-pro-preview">gemini-3-pro-preview</option>
+                            <option value="gemini-2.5-flash-lite-preview-09-2025">gemini-2.5-flash-lite-preview-09-2025</option>
                         </select>
                     </div>
                 </details>

@@ -74,10 +74,13 @@ Specify all images and sounds needed for the game.
 
 ### Images (`/work/image_asset.json`)
 - **Count**: 3-8 sprites maximum
-- **Sizes**: 16x16, 32x32, or 64x64 pixels (small sprites only)
+- **Sizes**: 16x16, 32x32, 64x64, or larger (up to 256x256 for backgrounds)
+- **Formats**: 
+  - **.svg**: BEST for 32x32 sprites, complex geometric shapes, neon/vector styles, and larger graphics.
+  - **.png**: BEST for very small pixel art (16x16 or less) where individual pixels matter.
 - **Description Length**: 3-5 sentences minimum, providing rich visual context
 - **Visual Details**: REQUIRED - Fill out all five fields (shape, colors, style, key_features, inspiration)
-- **Names**: Descriptive filenames (player.png, enemy.png, bullet.png)
+- **Names**: Descriptive filenames with proper extension (player.svg, explosion.png)
 - **1984 Authenticity**: Reference classic arcade games, use period-appropriate color palettes (CGA/EGA colors), emphasize geometric simplicity
 
 ### ⛔ PROHIBITED: Background Images

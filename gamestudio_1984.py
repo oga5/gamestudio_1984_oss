@@ -392,8 +392,8 @@ def create_game_agent(role: str, task: str, asset_context: str = "", session_id:
 
     if api_base:
         # LiteLLM / OpenAI compatible endpoint
-        # Ensure we have some API key, even if it's a dummy for local LiteLLM
-        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "none"
+        # Use a dummy key for the proxy; the proxy is responsible for injecting the real API key
+        api_key = "sk-no-key-required"
         llm = ChatOpenAI(
             model=model_name,
             temperature=0,

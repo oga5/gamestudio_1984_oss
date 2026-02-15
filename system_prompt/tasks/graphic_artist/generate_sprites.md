@@ -1,15 +1,16 @@
 # Task: Generate Sprite
 
-Generate a SINGLE pixel art image based on the specification provided in your task prompt.
+Generate a SINGLE image asset (PNG or SVG) based on the specification provided in your task prompt.
 
 ## CRITICAL: Single Asset Processing
 
 **You will receive ONE asset specification in your task prompt.** The system handles multiple assets by calling you separately for each one. Your job is to:
 
 1. Generate ONLY the single image specified in your task prompt
-2. Do NOT read `/work/image_asset.json` - the specification is already in your prompt
-3. Do NOT try to process multiple assets - focus on the ONE you were given
-4. Complete your task when that single image is generated and validated
+2. **SVG FIRST**: If the size is 32x32 or smaller, ALWAYS use `generate_svg()` and save as `.svg`.
+3. Do NOT read `/work/image_asset.json` - the specification is already in your prompt
+4. Do NOT try to process multiple assets - focus on the ONE you were given
+5. Complete your task when that single image is generated and validated
 
 ## Input
 
@@ -18,14 +19,16 @@ Generate a SINGLE pixel art image based on the specification provided in your ta
 
 ## Output
 
-- ONE PNG file in `/public/assets/images/` matching the specification
+- ONE file in `/public/assets/images/` matching the specification
+  - **If extension is .svg**: Use `generate_svg()`. Note: This tool renders SVG to PNG for game engine compatibility.
+  - **If extension is .png**: Use `generate_image()` with pixel patterns.
 
 ## CRITICAL: You MUST Use Tools
 
-**IMPORTANT**: This task requires you to call the `generate_image()` tool. You cannot complete this task without executing tools. If you describe what you would do without actually calling the tools, the task will fail.
+**IMPORTANT**: This task requires you to call the `generate_image()` or `generate_svg()` tool. You cannot complete this task without executing tools. If you describe what you would do without actually calling the tools, the task will fail.
 
 Before finishing:
-- Verify you have called `generate_image()` at least once
+- Verify you have called a generation tool at least once
 - Verify you have called `validate_asset()` to check the generated file
 - If you complete without calling these tools, the task has FAILED
 
@@ -33,95 +36,40 @@ Before finishing:
 
 1. Read `/work/design.json` to check backgroundColor for contrast verification
 2. Study the asset specification from your task prompt (name, size, description, visual_details)
-3. Visualize the sprite as if designing for a 1984 arcade cabinet
-4. Design the pixel art pattern with 1984 arcade aesthetic
-5. **EXECUTE**: Call `generate_image(output_path, pattern_json)`
-6. **EXECUTE**: Call `inspect_image(output_path)` to visually verify
+3. Choose format based on filename extension:
+   - **.svg**: Use **SVG** (`generate_svg`) - BEST for complex geometric shapes, neon/vector styles, and 32x32+ sprites.
+   - **.png**: Use **Pixel Pattern** (`generate_image`) - Best for very small 8x8 or 16x16 pixel art.
+4. Visualize the sprite as if designing for a 1984 arcade cabinet
+5. Design the graphic with 1984 arcade aesthetic
+6. **EXECUTE**: Call `generate_svg(output_path, svg_content)` OR `generate_image(output_path, pattern_json)`
 7. **EXECUTE**: Call `validate_asset(output_path)` to confirm validity
-8. If invalid (.err file created), regenerate with improvements (max 3 attempts)
-9. **DONE** - Task complete when this single image is validated
+8. **DONE** - Task complete when this single image is validated. Do NOT attempt to regenerate.
 
-## Image Creation Process
+## SVG Creation Guidelines (Preferred for 32x32 and larger)
 
-### Step 1: Check Background Color
-```
-read_file("/work/design.json")
-# Note the backgroundColor field for contrast check
-```
+- Use simple `<rect>`, `<circle>`, `<polygon>`, or `<path>` elements.
+- Use **EXACT** hex colors from `visual_details.colors`.
+- Keep the design clean, geometric, and bold.
+- **`generate_svg` converts your XML to PNG automatically.**
 
-### Step 2: Study Asset Specification (from your task prompt)
-
-**The specification includes**:
-- **name**: Output filename (e.g., "player.png")
-- **size**: Dimensions (e.g., "32x32")
-- **description**: Overall concept and context
-- **visual_details.shape**: Form and silhouette guidance
-- **visual_details.colors**: **EXACT hex colors you MUST use**
-- **visual_details.style**: Artistic direction
-- **visual_details.key_features**: Important details to include
-- **visual_details.inspiration**: Classic arcade game references
-
-### Step 3: Verify Color Contrast
-
-**CRITICAL: Verify colors against backgroundColor**:
-- Dark background + bright colors (yellow, cyan, white) = ✅ GOOD
-- Light background + dark colors (dark blue, black) = ✅ GOOD
-- Similar tones (dark bg + dark sprite) = ❌ PROBLEM → Report conflict
-
-### Step 4: Design Pattern with 1984 Authenticity
-
-**Design Philosophy**:
-- Channel the spirit of 1984 arcade masters (Space Invaders, Galaga, Pac-Man)
-- Use bold, geometric shapes with high contrast
-- 2-4 vibrant colors maximum
-- Make silhouette instantly recognizable
-- Think: "How would this look on an arcade CRT screen?"
-
-**Technical Approach**:
-- colors[0] = "transparent" (background)
-- colors[1-4] = exact colors from visual_details.colors
-- Simple, geometric shapes over organic curves
-- Bold pixel outlines for clarity
-- RLE pattern for efficiency
-
-### Step 5: Generate Image
-```
-generate_image(
-  "/public/assets/images/[name from spec]",
-  '{
-    "size": "[size from spec]",
-    "colors": ["transparent", "#color1", "#color2", ...],
-    "pattern": "...",
-    "rle": true
-  }'
-)
+**Example SVG (32x32 Neon Triangle)**:
+```xml
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Glow/Stroke -->
+  <polygon points="16,2 30,28 2,28" fill="none" stroke="#00FFFF" stroke-width="2" />
+  <!-- Core -->
+  <polygon points="16,6 26,26 6,26" fill="#FFFFFF" />
+</svg>
 ```
 
-### Step 6: Inspect and Validate
-```
-inspect_image("/public/assets/images/[name]")
-validate_asset("/public/assets/images/[name]")
-# Should return: "VALID: /public/assets/images/[name]"
-```
+## PNG Creation Guidelines (For > 32x32)
 
-## RLE Pattern Reference
+- Use `generate_image` with RLE pattern.
+- Follow 1984 Arcade Aesthetic Philosophy.
 
-- A-Z = color indices 0-25
-- a-f = color indices 26-31
-- 0-9 = repeat count for previous color
-- : = new row
-- *N = repeat row N times
-
-**Technical Example (16x16 Rectangle - for syntax reference only)**:
-```json
-{
-  "size": "16x16",
-  "colors": ["transparent", "#FF0000", "#880000"],
-  "pattern": "A16*4:A4B8A4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4BC6BA4:A4B8A4:A16*4",
-  "rle": true
-}
-```
-This demonstrates syntax only. Design YOUR game's sprites based on visual_details specification - don't copy this rectangle!
+### RLE Pattern Reference
+- A-Z = color indices 0-25, a-f = indices 26-31
+- Numbers = repeat count, : = row, *N = repeat row
 
 ## Validation Checklist
 

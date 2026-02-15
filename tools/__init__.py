@@ -32,7 +32,9 @@ from .json_tools import (
 
 from .asset_tools import (
     generate_image,
+    generate_svg,
     generate_sound,
+    generate_sfx,
 )
 
 from .asset_validator import (
@@ -82,6 +84,7 @@ BASE_PROGRAMMER_TOOLS = [
 
 BASE_GRAPHIC_ARTIST_TOOLS = [
     generate_image,
+    generate_svg,
     inspect_image,
     validate_asset,
     list_directory,
@@ -90,6 +93,7 @@ BASE_GRAPHIC_ARTIST_TOOLS = [
 
 BASE_SOUND_ARTIST_TOOLS = [
     generate_sound,
+    generate_sfx,
     inspect_audio,
     validate_asset,
     list_directory,
@@ -157,7 +161,9 @@ __all__ = [
     'edit_json_item',
     # Asset tools
     'generate_image',
+    'generate_svg',
     'generate_sound',
+    'generate_sfx',
     # Validation tools
     'validate_asset',
     'validate_all_assets',
