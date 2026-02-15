@@ -675,9 +675,13 @@ def execute_asset_generation_task(agent, agent_role: str, task_name: str, task_i
         asset_name = asset.get("name", f"asset_{i}")
         tprint(f"\n  [{i}/{len(assets)}] Generating {asset_type}: {asset_name}")
 
-        # Determine asset path
+        # Determine asset path for existence check
+        # generate_svg converts .svg to .png, so check for .png when asset name ends with .svg
+        check_name = asset_name
+        if asset_type == "image" and asset_name.lower().endswith(".svg"):
+            check_name = os.path.splitext(asset_name)[0] + ".png"
         if asset_type == "image":
-            asset_path = os.path.join(project_dir, "public", "assets", "images", asset_name)
+            asset_path = os.path.join(project_dir, "public", "assets", "images", check_name)
         else:  # sound
             asset_path = os.path.join(project_dir, "public", "assets", "sounds", asset_name)
 
